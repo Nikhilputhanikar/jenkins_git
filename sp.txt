@@ -1,0 +1,26 @@
+DELIMITER $$
+CREATE PROCEDURE `spCx_Call`(_tblname varchar(45),
+                                  _fromdatetime datetime,_todatetime datetime)
+BEGIN
+
+
+   Declare fromDtTm Datetime;
+   Declare toDtTm Datetime;
+
+   Set fromDtTm = _fromdatetime;
+   Set toDtTm = _todatetime;
+    
+set @query = Concat("SELECT Id,DialedAt,ReleasedAt,PhoneNo,Lang,BlockType,
+NumToBlock,SwitchResp from cx_call where DialedAt between '",fromDtTm,"' AND '",toDtTm,"'");
+
+
+/*select @query;*/
+
+Set @finalqry= Concat("Create Table ",_tblname,"_t_1  as ", @query);
+
+PREPARE QUERY FROM @finalqry;
+EXECUTE QUERY;
+DEALLOCATE PREPARE QUERY;
+
+END$$
+DELIMITER ;
